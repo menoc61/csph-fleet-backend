@@ -56,6 +56,25 @@ public class OrganizationController {
         return ApiResponse.success(organizationService.updateOrganization(id, request, userId));
     }
 
+    /**
+     * Partial update. Same body and semantics as the PUT above; the distinction
+     * exists because the web client's generic CRUD layer
+     * ({@code useCrud.updateMut}) issues PATCH for every resource, so without
+     * this route editing a marketer or a transporter answered 405.
+     *
+     * <p>{@code UpdateOrganizationRequest} fields are all nullable and the
+     * service only writes the non-null ones, so PATCH is a genuine partial
+     * update and cannot blank a field the caller omitted.
+     */
+    @RequiresPermission("ORG_UPDATE")
+    @PatchMapping("/{id}")
+    public ApiResponse<OrganizationResponse> patchOrganization(
+            @PathVariable String id,
+            @RequestBody UpdateOrganizationRequest request,
+            @RequestHeader("X-User-PersonId") String userId) {
+        return ApiResponse.success(organizationService.updateOrganization(id, request, userId));
+    }
+
     @RequiresPermission("ORG_UPDATE")
     @PatchMapping("/{id}/status")
     public ApiResponse<?> updateStatus(

@@ -397,6 +397,10 @@ services:
     ports:
       - "18089:8089"
     environment:
+      # Without a profile the @Profile({"dev","test","local"}) seeders never run:
+      # this service was the only one left without SPRING_PROFILES_ACTIVE, so its
+      # reference data silently stayed empty while every other service seeded.
+      - SPRING_PROFILES_ACTIVE=dev
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-subsidy:5432/gpl_subsidy_db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
